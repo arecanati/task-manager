@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Simple To-Do List</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="app">
+    <header class="app-header">
+      <div class="app-header-copy">
+        <h1>Task Manager</h1>
+        <p>Plan your tasks efficiently - get your stuff done.</p>
+      </div>
+
+      <div class="theme-switch" role="group" aria-label="Theme mode">
+        <button id="theme-light-btn" type="button" class="theme-btn" data-theme-choice="light" aria-pressed="false">
+          Light
+        </button>
+        <button id="theme-dark-btn" type="button" class="theme-btn" data-theme-choice="dark" aria-pressed="false">
+          Dark
+        </button>
+      </div>
+    </header>
+
+    <section class="smart-add" aria-label="Smart Add task">
+      <div class="smart-add-head">
+        <button
+          id="toggle-smart-add-btn"
+          type="button"
+          aria-expanded="false"
+          aria-controls="smart-add-panel"
+        >
+          Open Smart Add (Beta)
+        </button>
+      </div>
+      <div id="smart-add-panel" class="smart-add-panel is-collapsed" hidden>
+        <div class="smart-add-controls">
+          <label for="smart-add-input" class="sr-only">Describe your task</label>
+          <input id="smart-add-input" type="text" placeholder="Describe your task...">
+          <button id="smart-add-btn" type="button">Smart Add (Beta)</button>
+        </div>
+        <p id="smart-add-status" class="smart-add-status" role="status" aria-live="polite"></p>
+      </div>
+    </section>
+
+    <section class="task-entry-wrap" aria-label="Add a new task">
+      <div class="task-entry-head">
+        <button
+          id="toggle-task-entry-btn"
+          type="button"
+          aria-expanded="false"
+          aria-controls="task-entry-panel"
+        >
+          Open Add Task
+        </button>
+      </div>
+
+      <div id="task-entry-panel" class="task-entry-panel is-collapsed" hidden>
+        <div class="task-entry">
+          <label for="task-input" class="sr-only">Task</label>
+          <input id="task-input" type="text" placeholder="What do you need to do?">
+
+          <label for="task-tags" class="sr-only">Task category</label>
+          <input id="task-tags" type="text" list="tag-options" placeholder="Category">
+          <datalist id="tag-options"></datalist>
+
+          <label for="task-date" class="sr-only">Due date</label>
+          <input id="task-date" type="date">
+
+          <label for="task-time" class="sr-only">Due time</label>
+          <input id="task-time" type="time">
+
+          <div class="advanced-optional-wrap task-advanced-builder">
+            <button
+              id="toggle-task-advanced-btn"
+              type="button"
+              class="toggle-advanced-btn"
+              aria-expanded="false"
+              aria-controls="task-advanced-panel"
+            >
+              Advanced
+            </button>
+            <div id="task-advanced-panel" class="advanced-panel is-collapsed" hidden>
+              <label for="task-priority" class="sr-only">Task priority</label>
+              <select id="task-priority">
+                <option value="" selected disabled hidden>Priority</option>
+                <option value="high">High priority</option>
+                <option value="medium">Medium priority</option>
+                <option value="low">Low priority</option>
+              </select>
+
+              <div class="subtask-optional-wrap task-subtask-builder">
+                <button
+                  id="toggle-task-subtasks-btn"
+                  type="button"
+                  class="toggle-subtasks-btn"
+                  aria-expanded="false"
+                  aria-controls="task-subtask-panel"
+                >
+                  Subtasks
+                </button>
+                <div id="task-subtask-panel" class="subtask-panel is-collapsed" hidden>
+                  <label for="task-subtask-input" class="sr-only">Add subtask</label>
+                  <div class="subtask-builder-row">
+                    <input id="task-subtask-input" type="text" placeholder="Add a subtask...">
+                    <button id="add-subtask-btn" type="button">Add Subtask</button>
+                  </div>
+                  <ul id="task-subtasks-preview" class="subtask-draft-list" aria-live="polite"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button id="add-task-btn" type="button">Add Task</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="task-search" aria-label="Search tasks">
+      <label for="task-search-input" class="sr-only">Search tasks</label>
+      <input
+        id="task-search-input"
+        type="search"
+        placeholder="Search by task text or category..."
+        autocomplete="off"
+      >
+    </section>
+
+    <section class="task-controls" aria-label="Task sorting controls">
+      <label for="sort-select">Sort by</label>
+      <select id="sort-select">
+        <option value="manual">Manual order</option>
+        <option value="newest">Newest added</option>
+        <option value="due-soon">Nearest due date</option>
+        <option value="priority">Priority (High to Low)</option>
+      </select>
+
+      <label for="category-filter">Category</label>
+      <select id="category-filter">
+        <option value="all">All categories</option>
+      </select>
+
+      <button id="toggle-dashboard-btn" type="button" aria-expanded="false" aria-controls="dashboard-panel">
+        Show Progress Dashboard
+      </button>
+
+      <button id="open-calendar-btn" type="button" aria-haspopup="dialog" aria-controls="calendar-modal-overlay">
+        Open Calendar
+      </button>
+
+      <label for="show-completed-toggle" class="show-completed-toggle">
+        <input id="show-completed-toggle" type="checkbox">
+        Show completed
+      </label>
+
+    </section>
+
+    <section id="dashboard-panel" class="dashboard is-collapsed" aria-label="Task progress dashboard" hidden>
+      <div class="dashboard-stats">
+        <article class="stat-card">
+          <h2>Total</h2>
+          <p id="total-tasks">0</p>
+        </article>
+        <article class="stat-card stat-inline">
+          <h2>Completed</h2>
+          <p id="completed-tasks">0</p>
+          <span id="completed-detail" class="stat-detail">Today: 0 done</span>
+        </article>
+        <article class="stat-card stat-inline">
+          <h2>Remaining</h2>
+          <p id="remaining-tasks">0</p>
+          <span id="remaining-detail" class="stat-detail">Today: 0 left</span>
+        </article>
+        <article class="stat-card">
+          <h2>Completion</h2>
+          <p id="completion-percentage">0%</p>
+        </article>
+      </div>
+
+      <div class="progress-wrap">
+        <div class="progress-head">
+          <div class="progress-head-left">
+            <div class="progress-range-toggle" role="group" aria-label="Progress range">
+              <button id="progress-today-btn" type="button" class="progress-range-btn" aria-pressed="true">
+                Today
+              </button>
+              <button id="progress-week-btn" type="button" class="progress-range-btn" aria-pressed="false">
+                This Week
+              </button>
+              <button id="progress-month-btn" type="button" class="progress-range-btn" aria-pressed="false">
+                This Month
+              </button>
+            </div>
+            <span id="progress-title">Today Progress</span>
+          </div>
+          <span id="progress-label">0%</span>
+        </div>
+        <div id="progress-track" class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+          <div id="progress-fill" class="progress-fill"></div>
+        </div>
+      </div>
+    </section>
+
+    <ul id="task-list" class="task-list" aria-live="polite"></ul>
+
+    <section id="completed-section" class="completed-section" hidden>
+      <h2>Completed</h2>
+      <ul id="completed-task-list" class="task-list" aria-live="polite"></ul>
+    </section>
+  </main>
+
+  <div id="calendar-modal-overlay" class="calendar-modal-overlay" hidden>
+    <section
+      id="calendar-modal"
+      class="calendar-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="calendar-title"
+    >
+      <header class="calendar-modal-header">
+        <h2 id="calendar-title">Calendar</h2>
+        <button id="close-calendar-btn" type="button" aria-label="Close calendar">Close</button>
+      </header>
+
+      <div class="calendar-toolbar">
+        <button id="calendar-prev-btn" type="button" aria-label="Previous month">Previous Month</button>
+        <h3 id="calendar-month-label" aria-live="polite"></h3>
+        <button id="calendar-today-btn" type="button">Today</button>
+        <button id="calendar-next-btn" type="button" aria-label="Next month">Next Month</button>
+      </div>
+
+      <div class="calendar-body">
+        <section class="calendar-main" aria-label="Monthly task calendar">
+          <div class="calendar-weekdays" aria-hidden="true">
+            <span>Sun</span>
+            <span>Mon</span>
+            <span>Tue</span>
+            <span>Wed</span>
+            <span>Thu</span>
+            <span>Fri</span>
+            <span>Sat</span>
+          </div>
+          <div id="calendar-grid" class="calendar-grid"></div>
+        </section>
+
+        <aside class="calendar-day-panel" aria-live="polite">
+          <h4 id="calendar-day-title">Select a date</h4>
+          <div class="calendar-add-head">
+            <button
+              id="toggle-calendar-add-btn"
+              type="button"
+              aria-expanded="false"
+              aria-controls="calendar-add-panel"
+            >
+              Open Add Task for Date
+            </button>
+          </div>
+          <div id="calendar-add-panel" class="calendar-add-panel is-collapsed" hidden>
+            <form id="calendar-add-form" class="calendar-add-form">
+              <p id="calendar-add-context" class="calendar-add-context">Pick a date to add tasks.</p>
+              <div class="calendar-add-row">
+                <label for="calendar-task-input" class="sr-only">Task for selected date</label>
+                <input
+                  id="calendar-task-input"
+                  type="text"
+                  class="calendar-add-input"
+                  placeholder="Add a task for this date..."
+                  disabled
+                >
+              </div>
+              <div class="calendar-add-row calendar-add-meta">
+                <label for="calendar-task-time" class="sr-only">Task time</label>
+                <input id="calendar-task-time" type="time" class="calendar-add-input" disabled>
+                <label for="calendar-task-tags" class="sr-only">Task category</label>
+                <input
+                  id="calendar-task-tags"
+                  type="text"
+                  list="tag-options"
+                  class="calendar-add-input"
+                  placeholder="Category"
+                  disabled
+                >
+                <button id="calendar-add-btn" type="submit" disabled>Add</button>
+              </div>
+              <div class="advanced-optional-wrap calendar-advanced-builder">
+                <button
+                  id="toggle-calendar-advanced-btn"
+                  type="button"
+                  class="toggle-advanced-btn"
+                  aria-expanded="false"
+                  aria-controls="calendar-advanced-panel"
+                  disabled
+                >
+                  Advanced
+                </button>
+                <div id="calendar-advanced-panel" class="advanced-panel is-collapsed" hidden>
+                  <label for="calendar-task-priority" class="sr-only">Task priority</label>
+                  <select id="calendar-task-priority" class="calendar-add-input" disabled>
+                    <option value="" selected disabled hidden>Priority</option>
+                    <option value="high">High</option>
+                    <option value="medium">Medium</option>
+                    <option value="low">Low</option>
+                  </select>
+
+                  <div class="subtask-optional-wrap calendar-subtask-builder">
+                    <button
+                      id="toggle-calendar-subtasks-btn"
+                      type="button"
+                      class="toggle-subtasks-btn"
+                      aria-expanded="false"
+                      aria-controls="calendar-subtask-panel"
+                      disabled
+                    >
+                      Subtasks
+                    </button>
+                    <div id="calendar-subtask-panel" class="subtask-panel is-collapsed" hidden>
+                      <label for="calendar-task-subtask-input" class="sr-only">Add subtask</label>
+                      <div class="subtask-builder-row">
+                        <input
+                          id="calendar-task-subtask-input"
+                          type="text"
+                          class="calendar-add-input"
+                          placeholder="Add a subtask..."
+                          disabled
+                        >
+                        <button id="calendar-add-subtask-btn" type="button" disabled>Add Subtask</button>
+                      </div>
+                      <ul id="calendar-task-subtasks-preview" class="subtask-draft-list" aria-live="polite"></ul>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+          <ul id="calendar-day-tasks" class="calendar-day-tasks"></ul>
+        </aside>
+      </div>
+
+      <section class="calendar-no-date" aria-label="Tasks without due dates">
+        <h4>No Due Date Tasks</h4>
+        <ul id="calendar-no-date-tasks" class="calendar-day-tasks"></ul>
+      </section>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
